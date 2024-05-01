@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "1.0.0",
-	"description": "This is an example plugin for Obsidian. This plugin counts the lines of the active file and prints it in the status bar.",
+	"name": "japanese-learning-plugin",
+	"version": "0.0.1",
+	"description": "This plugin assists you in learning Japanese by introducing a variety of features designed to simplify your studies.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

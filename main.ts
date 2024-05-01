@@ -1,40 +1,54 @@
-import { Plugin } from "obsidian";
+import { CachedMetadata, Plugin, getAllTags } from "obsidian";
 
-export default class ExamplePlugin extends Plugin {
-	statusBarElement: HTMLSpanElement;
+export default class JapaneseLearningPlugin extends Plugin {
 
-	onload() {
-		this.statusBarElement = this.addStatusBarItem().createEl("span");
+	private tagName = "JPStudy";
+	private japaneseCharactersRegex = /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B/g
 
-		this.readActiveFileAndUpdateLineCount();
+	private vocabularyCount = 0;
+	private idiomsCount = 0;
+	private materialsCount = 0;
 
-		this.app.workspace.on("editor-change", (editor) => {
-			const content = editor.getDoc().getValue();
-			this.updateLineCount(content);
-		});
+	async onload() {
 
-		this.app.workspace.on("active-leaf-change", () => {
-			this.readActiveFileAndUpdateLineCount();
-		});
-	}
+		let markdownFiles = this.app.vault.getMarkdownFiles();
 
-	onunload() {
-		this.statusBarElement.remove();
-	}
+		let filesWithTag = markdownFiles.filter(file => {
+			let cache = this.app.metadataCache.getFileCache(file);
+			if (cache && cache.frontmatter) {
+				let tags : string[] = cache.frontmatter.tags;
+				return tags.includes(this.tagName)
+			}
+		})
 
-	private async readActiveFileAndUpdateLineCount() {
-		const file = this.app.workspace.getActiveFile();
-		if (file) {
-			const content = await this.app.vault.read(file);
-			this.updateLineCount(content);
-		} else {
-			this.updateLineCount(undefined);
+		for (let file of filesWithTag) {
+			let content = await this.app.vault.read(file);
+			let sections = content.split('---');
+	
+			sections.forEach(section => {
+				let lines = section.split('\n')
+				let isCounting = false;
+				let count = 0;
+	
+				lines.forEach(line => {
+					if(line.startsWith('# ')) {
+						isCounting = true;
+					}
+	
+					else if(line.startsWith('---')){
+						isCounting = false;
+					}
+	
+					else if(isCounting && this.japaneseCharactersRegex.test(line)){
+						console.log("deschug")
+						count++
+					}
+				})
+				this.vocabularyCount += count;
+			})
 		}
+
+		console.log("Vocabulário: " + this.vocabularyCount)
 	}
 
-	private updateLineCount(fileContent?: string) {
-		const count = fileContent ? fileContent.split(/\r\n|\r|\n/).length : 0;
-		const linesWord = count === 1 ? "line" : "lines";
-		this.statusBarElement.textContent = `${count} ${linesWord}`;
-	}
 }

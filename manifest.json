@@ -1,11 +1,10 @@
 {
-	"id": "obsidian-example-plugin",
-	"name": "Example Plugin",
-	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "This is an example plugin for Obsidian. This plugin counts the lines of the active file and prints it in the status bar.",
-	"author": "Florian Ludewig",
-	"authorUrl": "https://flolu.de",
-	"fundingUrl": "https://flolu.de/donations",
-	"isDesktopOnly": false
+	"id": "japanese-learning-plugin",
+	"name": "Japanese Learning Plugin",
+	"version": "0.0.1",
+	"minAppVersion": "0.0.1",
+	"description": "This plugin assists you in learning Japanese by introducing a variety of features designed to simplify your studies.",
+	"author": "Leonardo Machado",
+	"authorUrl": "https://github.com/leomachadods",
+	"isDesktopOnly": true
 }
