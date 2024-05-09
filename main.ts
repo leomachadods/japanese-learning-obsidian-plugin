@@ -93,7 +93,7 @@ export default class JapaneseLearningPlugin extends Plugin {
 		if(!reading) {
 			back = `${definition}`;
 		} else {
-			back = `${definition} 「${reading}`;
+			back = `${definition}<br><br>「${reading}`;
 		}
 		
 
