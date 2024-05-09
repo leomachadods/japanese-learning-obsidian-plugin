@@ -1,6 +1,6 @@
 {
 	"name": "japanese-learning-plugin",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "This plugin assists you in learning Japanese by introducing a variety of features designed to simplify your studies.",
 	"main": "main.js",
 	"scripts": {
@@ -20,5 +20,8 @@
 		"obsidian": "latest",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
+	},
+	"dependencies": {
+		"axios": "^1.6.8"
 	}
 }
