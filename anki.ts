@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Word from 'word';
 
 export default class AnkiBridge {
 
@@ -22,15 +23,15 @@ export default class AnkiBridge {
 	
 	}
 
-    async createAnkiCard(term: string, reading: string, definition: string) {
+    async createAnkiCard(word: Word) {
 
-		let front = term;
+		let front = word.term;
 		let back;
 
-		if(!reading) {
-			back = `${definition}`;
+		if(!word.reading) {
+			back = `${word.definition}`;
 		} else {
-			back = `${definition}<br><br>「${reading}`;
+			back = `${word.definition}<br><br>「${word.reading}`;
 		}
 		
 
@@ -61,20 +62,9 @@ export default class AnkiBridge {
 	}
 
 
-	async createDeckBasedOnFileDate(fileSections: string[]) {
-		let firstSection = fileSections.first()?.trim();
-        
-        if(!firstSection){
-            return
-        }
-
-        let dateRegex = /date: (\d{4}-\d{2}-\d{2})/
-        let match = firstSection.match(dateRegex);
-        if (match) {
-            let date = match[1];
-            this.deckName = date
+	async createDeckBasedOnFileDate(fileDate: string) {
+            this.deckName = fileDate
             await this.createAnkiDeck();
-        }
 	}
 
 }
