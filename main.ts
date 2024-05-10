@@ -142,22 +142,4 @@ export default class JapaneseLearningPlugin extends Plugin {
 		return line.trim() !== '' && !line.startsWith('---');
 	}
 
-	private getFileDate(fileSections: string[]) {
-		let firstSection = fileSections.first()?.trim();
-        
-        if(!firstSection){
-            return
-        }
-
-        let dateRegex = /date: (\d{4}-\d{2}-\d{2})/
-        let match = firstSection.match(dateRegex);
-        if (match) {
-            let date = match[1];
-			return date;
-		} else {
-			throw new Error("O arquivo não possui a data")
-		}
-
-	}
-
 }
