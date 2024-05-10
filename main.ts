@@ -8,14 +8,14 @@ export default class JapaneseLearningPlugin extends Plugin {
 	private japaneseStudyFileTag = "JPStudy";
 	private japaneseCharactersRegex = /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B/g
 
-	sectionMap: { [key: string]: (line: string) => boolean } = {
+	private sectionMap: { [key: string]: (line: string) => boolean } = {
 		'vocabulary': this.countJapaneseWords,
 		'idioms': this.countJapaneseWords,
 		'materials': this.countAllLines,
 		'grammar points': this.countJapaneseWords
 	};
 
-	counts: { [key: string]: number } = {
+	private counts: { [key: string]: number } = {
 		'vocabulary': 0,
 		'idioms': 0,
 		'materials': 0,
@@ -89,6 +89,10 @@ export default class JapaneseLearningPlugin extends Plugin {
 		}
 
 		term = term.trim()
+
+		if(term.startsWith("[[")) {
+			term = term.replace(/\[\[|\]\]/g, "");
+		}
 
 		return {term, reading, definition}
 	}
