@@ -87,7 +87,7 @@ export default class JapaneseLearningPlugin extends Plugin {
 	}
 
 	private async createAnkiCards() {
-		const words = await this.readWordsAtMemory();
+		const words = await this.storeWordsAtMemory();
 		const Anki = new AnkiBridge();
 
 		await Anki.createAnkiDeck();
