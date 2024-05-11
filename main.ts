@@ -8,6 +8,9 @@ export default class JapaneseLearningPlugin extends Plugin {
 	private japaneseStudyFileTag = "JPStudy";
 	private japaneseCharactersRegex = /[\u3000-\u303F]|[\u3040-\u309F]|[\u30A0-\u30FF]|[\uFF00-\uFFEF]|[\u4E00-\u9FAF]|[\u2605-\u2606]|[\u2190-\u2195]|\u203B/g
 
+	private SECTION_HEADER = "# ";
+	private VOCABULARY_SECTION = "vocabulary";
+
 	private sectionMap: { [key: string]: (line: string) => boolean } = {
 		'vocabulary': this.countJapaneseWords,
 		'idioms': this.countJapaneseWords,
@@ -21,7 +24,6 @@ export default class JapaneseLearningPlugin extends Plugin {
 		'materials': 0,
 		'grammar points': 0
 	};
-	
 
 	async onload() {
 
@@ -41,32 +43,47 @@ export default class JapaneseLearningPlugin extends Plugin {
 		console.log(`Vocabulário: ${this.counts['vocabulary']}\nExpressões: ${this.counts['idioms']}\nMateriais: ${this.counts['materials']}\nGrammar Points: ${this.counts['grammar points']}`);
 	}
 
-	private async readWordsAtMemory() {
-		const words: Word[] = [];
-		const fileDates: string[] = []
+	private async storeWordsAtMemory() {
 	 	let markdownFiles = this.app.vault.getMarkdownFiles();
 		let filesWithTag = await this.getFilesWithSpecificTag(markdownFiles, this.japaneseStudyFileTag)
 
-		for(let file of filesWithTag) {
+		let words: Word[] = []
+
+		for (let file of filesWithTag) {
 			let content = await this.app.vault.read(file);
-			let sections = content.split('---').filter(content => content !== "")
+			let sections = content.split('---').filter(content => content !== "");
 			
-			sections.forEach(section => {
-				let lines = section.split('\n')
-				let currentSection: string | null = null;
-				
-				lines.forEach(async line => {
-					if(line.startsWith("# ")) {
-						let sectionName = line.slice(2).trim().toLowerCase()
-						currentSection = sectionName;
-					} else if(currentSection == "vocabulary" && line.trim() !== '' && line.trim() !== '-' && line.trim() !== '---') {
-						let { term, reading, definition } = this.extractTermReadingDefinition(line)
-						words.push(new Word(term, reading, definition))
-					}
-				})
-			})
+			for (let section of sections) {
+				let sectionWords: Word[] = this.processSection(section);
+				words.push(...sectionWords);
+			}
 		}
+			
 		return words
+	}
+
+	private processSection(section: string) {
+		let lines = section.split('\n');
+		let currentSection: string | null = null;
+		const words: Word[] = [];
+	
+		lines.forEach(line => {
+			if(line.startsWith(this.SECTION_HEADER)) {
+				const sectionName = line.slice(2).trim().toLowerCase();
+				currentSection = sectionName;
+			} else if(this.isVocabularyLine(currentSection, line)) {
+				const { term, reading, definition } = this.extractTermReadingDefinition(line);
+				words.push(new Word(term, reading, definition));
+			}
+		});
+
+		return words;
+	}
+
+	private isVocabularyLine(currentSection: string | null, line: string) {
+		const trimmedLine = line.trim();
+		const irrelevantLines = ['', '-', '---'];
+		return currentSection == this.VOCABULARY_SECTION && !irrelevantLines.includes(trimmedLine);
 	}
 
 	private async createAnkiCards() {
@@ -117,7 +134,6 @@ export default class JapaneseLearningPlugin extends Plugin {
 			});
 		});
 	}
-
 
 	private async getFilesWithSpecificTag(files: TFile[], tag: string): Promise<TFile[]> {
 		let filesWithTag: TFile[] = [];
