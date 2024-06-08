@@ -14,6 +14,7 @@
 **Requirement**
 
 - [Obsidian](https://obsidian.md)
+- Default file pattern
 - (Optional) [Anki](https://apps.ankiweb.net/)
 - Willpower
 
@@ -35,4 +36,30 @@ AnkiConnect
 
 #Third case
 [[計画]]「けいかく」ー　Plan
+```
+
+# File pattern
+
+```
+---
+date: 
+tags:
+  - JPStudy
+---
+
+# Vocabulary 
+
+- 
+
+---
+# Materials
+
+- 
+
+---
+# Grammar points
+
+- 
+
+---
 ```
