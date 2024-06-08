@@ -13,14 +13,12 @@ export default class JapaneseLearningPlugin extends Plugin {
 
 	private sectionMap: { [key: string]: (line: string) => boolean } = {
 		'vocabulary': this.countJapaneseWords,
-		'idioms': this.countJapaneseWords,
 		'materials': this.countAllLines,
 		'grammar points': this.countJapaneseWords
 	};
 
 	private counts: { [key: string]: number } = {
 		'vocabulary': 0,
-		'idioms': 0,
 		'materials': 0,
 		'grammar points': 0
 	};
@@ -40,7 +38,7 @@ export default class JapaneseLearningPlugin extends Plugin {
 			callback: this.createAnkiCards.bind(this)
 		})
 
-		console.log(`Vocabulário: ${this.counts['vocabulary']}\nExpressões: ${this.counts['idioms']}\nMateriais: ${this.counts['materials']}\nGrammar Points: ${this.counts['grammar points']}`);
+		console.log(`Vocabulário: ${this.counts['vocabulary']}\nMateriais: ${this.counts['materials']}\nGrammar Points: ${this.counts['grammar points']}`);
 	}
 
 	private async storeWordsAtMemory() {
