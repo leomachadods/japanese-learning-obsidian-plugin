@@ -58,9 +58,7 @@ export default class AnkiBridge {
 
 		if (result.data.error)
 			console.log(`Erro ao criar cartão do Anki: ${result.data.error}`);
-		
 	}
-
 
 	async createDeckBasedOnFileDate(fileDate: string) {
             this.deckName = fileDate
