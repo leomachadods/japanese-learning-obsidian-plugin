@@ -38,6 +38,16 @@ export default class JapaneseLearningPlugin extends Plugin {
 			callback: this.createAnkiCards.bind(this)
 		})
 
+		this.addCommand({
+			id: 'show-counts-console',
+			name: 'Show all information regarding counters in console',
+			callback: this.showCountersConsole.bind(this)
+		})
+
+		
+	}
+
+	private async showCountersConsole() {
 		console.log(`Vocabulário: ${this.counts['vocabulary']}\nMateriais: ${this.counts['materials']}\nGrammar Points: ${this.counts['grammar points']}`);
 	}
 
