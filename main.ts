@@ -48,6 +48,7 @@ export default class JapaneseLearningPlugin extends Plugin {
 	}
 
 	private async showCountersConsole() {
+		await this.updateCounts();
 		console.log(`Vocabulário: ${this.counts['vocabulary']}\nMateriais: ${this.counts['materials']}\nGrammar Points: ${this.counts['grammar points']}`);
 	}
 
@@ -68,6 +69,21 @@ export default class JapaneseLearningPlugin extends Plugin {
 		}
 			
 		return words
+	}
+
+	private async updateCounts() {
+		this.counts = {
+			'vocabulary': 0,
+			'materials': 0,
+			'grammar points': 0
+		};
+
+		let markdownFiles = this.app.vault.getMarkdownFiles();
+		let filesWithTag = await this.getFilesWithSpecificTag(markdownFiles, this.japaneseStudyFileTag);
+
+		for (let file of filesWithTag) {
+			await this.processFileToIncreaseCounters(file);
+		}
 	}
 
 	private processSection(section: string) {
