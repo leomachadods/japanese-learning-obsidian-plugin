@@ -2,6 +2,7 @@ import { CachedMetadata, Plugin, TFile, getAllTags } from "obsidian";
 import AnkiBridge from "anki";
 import axios from 'axios';
 import Word from "word";
+import { resolve } from "path";
 
 export default class JapaneseLearningPlugin extends Plugin {
 
@@ -22,6 +23,8 @@ export default class JapaneseLearningPlugin extends Plugin {
 		'materials': 0,
 		'grammar points': 0
 	};
+	
+	private duplicatesCounter: number = 0 
 
 	async onload() {
 
@@ -113,11 +116,41 @@ export default class JapaneseLearningPlugin extends Plugin {
 	private async createAnkiCards() {
 		const words = await this.storeWordsAtMemory();
 		const Anki = new AnkiBridge();
-
+		
 		await Anki.createAnkiDeck();
-		words.forEach(word => {
-			Anki.createAnkiCard(word)
-		})
+		await this.createAnkiWordCardsByChunkIfNeeded(Anki, words)
+	}
+	
+	//Implementar
+	private async showConsoleDuplicates() {
+		console.log(this.duplicatesCounter)
+	}
+
+	private async createAnkiWordCardsByChunkIfNeeded(anki: AnkiBridge, words: Word[]) {
+		const MAX_CHUNK_SIZE = 500;
+
+		if(words.length < MAX_CHUNK_SIZE) {
+			this.createAnkiWordCards(anki, words)
+			return
+		}
+
+		const chunks: Word[][] = []
+		const sleepTime = 1000
+		const chunkSize = Math.ceil(words.length / MAX_CHUNK_SIZE)
+		
+		for(let i = 0; i < chunkSize; i++){
+			const start = i * MAX_CHUNK_SIZE
+			const end = start + MAX_CHUNK_SIZE
+			chunks.push(words.slice(start, end))
+		}
+
+		for (let i = 0; i < chunks.length; i++) {
+			await this.createAnkiWordCards(anki, chunks[i])
+		}
+	}
+
+	private async createAnkiWordCards(anki: AnkiBridge, words: Word[]) {
+		await Promise.all(words.map(word => anki.createAnkiCard(word)));
 	}
 
 	private extractTermReadingDefinition(line: string) {
